@@ -1,0 +1,13 @@
+name: FixNotes
+version: '1.0'
+main: cloud.pg4l.fixNotes.FixNotes
+api-version: '1.21'
+authors: [ morgus ]
+description: Notes that can fix your tools
+website: pg4l.cloud
+commands:
+  fixnote:
+    description: Komenda do używania Fix Note
+    usage: /fixnote <give/reload> [player]
+    permission: fixnotes.use
+    permission-message: "You don't have permission to use this command."
