@@ -115,7 +115,7 @@ public final class FixNotes extends JavaPlugin implements Listener {
                     NamespacedKey key = new NamespacedKey(plugin, "fix_note");
                     meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "special_note");
                     if (plugin.enchantGlint) {
-                        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+                        meta.addEnchant(Enchantment.MENDING, 10, true);
                     }
                     note.setItemMeta(meta);
                 }
