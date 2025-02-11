@@ -3,7 +3,7 @@ The **FixNotes** plugin allows players to repair their damaged items using speci
 ### Permissions:
 - fixnotes.use (for using /fixnote give, /fixnote reload command)
   
-### Commands
+### Commands:
 - /fixnote <use/reload> [player]
   
 ### Default config:
