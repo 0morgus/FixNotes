@@ -1,7 +1,7 @@
 name: FixNotes
 version: '1.0'
 main: cloud.pg4l.fixNotes.FixNotes
-api-version: '1.21'
+api-version: '1.14'
 authors: [ morgus ]
 description: Notes that can fix your tools
 website: pg4l.cloud
