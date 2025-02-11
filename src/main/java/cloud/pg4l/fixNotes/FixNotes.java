@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,49 +21,46 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public final class FixNotes extends JavaPlugin implements Listener {
-
     private String fixNoteName;
     private String messageUsage;
     private String messagePlayerNotFound;
     private String messageItemReceived;
     private String messageItemRepaired;
+    private boolean enchantGlint;
 
     @Override
     public void onEnable() {
         createDefaultConfig();
         loadMessages();
-        getLogger().info("[FixNotes] plugin is enabled.");
-        this.getCommand("fixnote").setExecutor(new FixNoteCommand(this));
+        getLogger().info("[FixNotes] Plugin enabled.");
+        Objects.requireNonNull(getCommand("fixnote")).setExecutor(new FixNoteCommand(this));
         getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("[FixNotes] plugin is disabled.");
+        getLogger().info("[FixNotes] Plugin disabled.");
     }
 
     private void createDefaultConfig() {
         File file = new File(getDataFolder(), "config.yml");
-
         if (!file.exists()) {
-            getLogger().info("File config.yml doesn't exist... Creating");
+            getLogger().info("Creating default config.yml...");
             FileConfiguration config = YamlConfiguration.loadConfiguration(file);
             config.set("fix_note_name", "&6Fix Note");
             config.set("message_usage", "&cUsage: /fixnote <give/reload> [player]");
             config.set("message_player_not_found", "&cPlayer is not online.");
-            config.set("message_item_received", "&aPlayer {PLAYER} got Fix Note!");
+            config.set("message_item_received", "&aPlayer {PLAYER} got a Fix Note!");
             config.set("message_item_repaired", "&aYour item has been fixed!");
+            config.set("enchant_glint", true);
             try {
                 config.save(file);
-                getLogger().info("Plik config.yml został utworzony.");
             } catch (IOException e) {
-                getLogger().severe("Błąd podczas zapisywania pliku config.yml: " + e.getMessage());
                 e.printStackTrace();
             }
-        } else {
-            getLogger().info("Plik config.yml już istnieje.");
         }
         reloadConfig();
     }
@@ -72,8 +70,9 @@ public final class FixNotes extends JavaPlugin implements Listener {
         fixNoteName = ChatColor.translateAlternateColorCodes('&', config.getString("fix_note_name", "&6Fix Note"));
         messageUsage = ChatColor.translateAlternateColorCodes('&', config.getString("message_usage", "&cUsage: /fixnote <give/reload> [player]"));
         messagePlayerNotFound = ChatColor.translateAlternateColorCodes('&', config.getString("message_player_not_found", "&cPlayer is not online."));
-        messageItemReceived = ChatColor.translateAlternateColorCodes('&', config.getString("message_item_received", "&aPlayer {PLAYER} got Fix Note!"));
+        messageItemReceived = ChatColor.translateAlternateColorCodes('&', config.getString("message_item_received", "&aPlayer {PLAYER} got a Fix Note!"));
         messageItemRepaired = ChatColor.translateAlternateColorCodes('&', config.getString("message_item_repaired", "&aYour item has been fixed!"));
+        enchantGlint = config.getBoolean("enchant_glint", true);
     }
 
     public static class FixNoteCommand implements CommandExecutor {
@@ -91,13 +90,9 @@ public final class FixNotes extends JavaPlugin implements Listener {
             }
 
             if (args[0].equalsIgnoreCase("reload")) {
-                if (sender.hasPermission("fixnotes.reload")) {
-                    plugin.reloadConfig();
-                    plugin.loadMessages();
-                    sender.sendMessage(ChatColor.GREEN + "Config reloaded successfully.");
-                } else {
-                    sender.sendMessage(ChatColor.RED + "You do not have permission to reload the config.");
-                }
+                plugin.reloadConfig();
+                plugin.loadMessages();
+                sender.sendMessage(ChatColor.GREEN + "FixNotes config reloaded.");
                 return true;
             }
 
@@ -119,6 +114,9 @@ public final class FixNotes extends JavaPlugin implements Listener {
                     meta.setDisplayName(plugin.fixNoteName);
                     NamespacedKey key = new NamespacedKey(plugin, "fix_note");
                     meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "special_note");
+                    if (plugin.enchantGlint) {
+                        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+                    }
                     note.setItemMeta(meta);
                 }
 
@@ -128,7 +126,7 @@ public final class FixNotes extends JavaPlugin implements Listener {
             }
 
             sender.sendMessage(plugin.messageUsage);
-            return false;
+            return true;
         }
     }
 
@@ -139,14 +137,12 @@ public final class FixNotes extends JavaPlugin implements Listener {
 
         ItemStack cursorItem = event.getCursor();
         ItemStack clickedItem = event.getCurrentItem();
-
         if (cursorItem == null || clickedItem == null) return;
 
         NamespacedKey key = new NamespacedKey(this, "fix_note");
 
         if (cursorItem.getType() == Material.PAPER && cursorItem.hasItemMeta() &&
                 cursorItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
-
             if (clickedItem.getType().getMaxDurability() > 0 && clickedItem.getDurability() > 0) {
                 clickedItem.setDurability((short) 0);
                 player.sendMessage(messageItemRepaired);
