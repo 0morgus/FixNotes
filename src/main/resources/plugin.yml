@@ -7,7 +7,7 @@ description: Notes that can fix your tools
 website: pg4l.cloud
 commands:
   fixnote:
-    description: Komenda do używania Fix Note
+    description: Command to use FixNotes
     usage: /fixnote <give/reload> [player]
     permission: fixnotes.use
     permission-message: "You don't have permission to use this command."
