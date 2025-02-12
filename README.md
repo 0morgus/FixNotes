@@ -18,4 +18,6 @@ message_item_repaired: '&aYour item has been fixed!'
 ### How to use Fix Notes? 
 The player can then right-click on a damaged item in their inventory with the Fix Note to repair it.
 
-![](https://i.imgur.com/P9jTBE7.gif)
+  **Supports:** All versions above 1.14+
+  
+  ![](https://i.imgur.com/aKopEu1.gif)
