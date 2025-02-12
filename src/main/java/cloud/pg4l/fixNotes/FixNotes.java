@@ -21,7 +21,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class FixNotes extends JavaPlugin implements Listener {
     private String fixNoteName;
@@ -30,9 +32,11 @@ public final class FixNotes extends JavaPlugin implements Listener {
     private String messageItemReceived;
     private String messageItemRepaired;
     private boolean enchantGlint;
+    private List<String> itemLore;
 
     @Override
     public void onEnable() {
+        Metrics metrics = new Metrics(this, 24749);
         createDefaultConfig();
         loadMessages();
         getLogger().info("[FixNotes] Plugin enabled.");
@@ -56,6 +60,7 @@ public final class FixNotes extends JavaPlugin implements Listener {
             config.set("message_item_received", "&aPlayer {PLAYER} got a Fix Note!");
             config.set("message_item_repaired", "&aYour item has been fixed!");
             config.set("enchant_glint", true);
+            config.set("item_lore", List.of("&7Use this to repair", "&7any damaged item!"));
             try {
                 config.save(file);
             } catch (IOException e) {
@@ -73,6 +78,9 @@ public final class FixNotes extends JavaPlugin implements Listener {
         messageItemReceived = ChatColor.translateAlternateColorCodes('&', config.getString("message_item_received", "&aPlayer {PLAYER} got a Fix Note!"));
         messageItemRepaired = ChatColor.translateAlternateColorCodes('&', config.getString("message_item_repaired", "&aYour item has been fixed!"));
         enchantGlint = config.getBoolean("enchant_glint", true);
+        itemLore = config.getStringList("item_lore").stream()
+                .map(line -> ChatColor.translateAlternateColorCodes('&', line))
+                .collect(Collectors.toList());
     }
 
     public static class FixNoteCommand implements CommandExecutor {
@@ -112,6 +120,7 @@ public final class FixNotes extends JavaPlugin implements Listener {
                 ItemMeta meta = note.getItemMeta();
                 if (meta != null) {
                     meta.setDisplayName(plugin.fixNoteName);
+                    meta.setLore(plugin.itemLore);
                     NamespacedKey key = new NamespacedKey(plugin, "fix_note");
                     meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "special_note");
                     if (plugin.enchantGlint) {
