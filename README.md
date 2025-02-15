@@ -8,11 +8,16 @@ The **FixNotes** plugin allows players to repair their damaged items using speci
   
 ### Default config:
 ```
-fix_note_name: '&6Fix Note' 
-message_usage: '&cUsage: /fixnote <give/reload> [player]' 
-message_player_not_found: '&cPlayer is not online.' 
-message_item_received: '&aPlayer {PLAYER} got Fix Note!' 
+fix_note_name: '&6Fix Note'
+message_usage: '&cUsage: /fixnote <give/reload> [player]'
+message_player_not_found: '&cPlayer is not online.'
+message_item_received: '&aPlayer {PLAYER} got a Fix Note!'
 message_item_repaired: '&aYour item has been fixed!'
+enchant_glint: true
+item_lore:
+- '&7Use this to repair'
+- '&7any damaged item!'
+
 ```
 
 ### How to use Fix Notes? 
