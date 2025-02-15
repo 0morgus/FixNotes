@@ -155,7 +155,7 @@ public final class FixNotes extends JavaPlugin implements Listener {
                 player.sendMessage(messageItemRepaired);
 
                 if (player.getGameMode() != GameMode.CREATIVE) {
-                    cursorItem.setAmount(cursorItem.getAmount() - 1);
+                    event.setCursor(null);
                 }
 
                 event.setCursor(cursorItem.getAmount() > 0 ? cursorItem : null);
