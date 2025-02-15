@@ -151,13 +151,12 @@ public final class FixNotes extends JavaPlugin implements Listener {
                 cursorItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
 
             if (clickedItem.getType().getMaxDurability() > 0 && clickedItem.getDurability() > 0) {
+                event.setCancelled(true);
+
                 clickedItem.setDurability((short) 0);
                 player.sendMessage(messageItemRepaired);
 
-                cursorItem.setAmount(cursorItem.getAmount() - 1);
-                event.setCursor(null);
-
-                event.setCancelled(true);
+                event.setCursor(cursorItem.getAmount() > 0 ? cursorItem : null);
             }
         }
 
