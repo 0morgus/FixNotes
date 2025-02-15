@@ -1,9 +1,6 @@
 package cloud.pg4l.fixNotes;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -152,13 +149,19 @@ public final class FixNotes extends JavaPlugin implements Listener {
 
         if (cursorItem.getType() == Material.PAPER && cursorItem.hasItemMeta() &&
                 cursorItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+
             if (clickedItem.getType().getMaxDurability() > 0 && clickedItem.getDurability() > 0) {
                 clickedItem.setDurability((short) 0);
                 player.sendMessage(messageItemRepaired);
-                cursorItem.setAmount(cursorItem.getAmount() - 1);
+
+                if (player.getGameMode() != GameMode.CREATIVE) {
+                    cursorItem.setAmount(cursorItem.getAmount() - 1);
+                }
+
                 event.setCursor(cursorItem.getAmount() > 0 ? cursorItem : null);
                 event.setCancelled(true);
             }
         }
+
     }
 }
